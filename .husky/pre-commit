@@ -1,2 +1,0 @@
-# Run formatter (write), and linting (read) - only on files that have actually changed
-npx lint-staged
