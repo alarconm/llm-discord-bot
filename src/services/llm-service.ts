@@ -38,7 +38,7 @@ export async function generateResponse(model: LLMModel, messages: ChatCompletion
       });
       return gptResponse.choices[0].message.content || '';
 
-    case LLMModel.LLAMA:
+    case LLMModel.LLAMA: {
       const systemMessage = messages.find(msg => msg.role === 'system');
       const userMessages = messages.filter(msg => msg.role !== 'system');
       const llamaResponse = await axios.post(LMSTUDIO_API_URL, {
@@ -49,6 +49,7 @@ export async function generateResponse(model: LLMModel, messages: ChatCompletion
         max_tokens: 1000,
       });
       return llamaResponse.data.choices[0].message.content;
+    }
 
     default:
       throw new Error('Invalid model specified');

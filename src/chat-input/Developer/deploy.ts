@@ -37,7 +37,7 @@ const DeployCommand = new ChatInputCommand({
       await interaction.editReply('Successfully deployed commands to this server.');
     } catch (error) {
       console.error('Error deploying commands:', error);
-      await interaction.editReply('An error occurred while deploying commands. Please check the console for more details.');
+      await interaction.editReply('An error occurred while deploying commands.');
     }
   },
 });
