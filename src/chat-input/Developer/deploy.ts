@@ -24,51 +24,21 @@ const DeployCommand = new ChatInputCommand({
         .setRequired(false),
     ),
   run: async (client, interaction) => {
-    const { options } = interaction;
-    const scope = options.getString('scope', true);
-    const guildId = options.getString('server', false);
-
-    await DeployCommand.reply(interaction, {
-      embeds: [
-        client.embeds.waiting(
-          `Deploying commands to ${
-            scope === 'global' ? 'global' : `guild ${guildId}`
-          }`,
-        ),
-      ],
-    });
-
-    let res;
-    if (scope === 'global') {
-      // If global, deploy global commands right away
-      res = await client.commandManager.deployCommands({ type: 'global' });
-    } else {
-      // Make sure a guild ID was provided
-      if (!guildId) {
-        DeployCommand.reply(interaction, {
-          embeds: [
-            client.embeds.error(
-              'No guild/server ID was provided - this command has been cancelled',
-            ),
-          ],
-        });
-        return;
-      }
-
-      // Deploy development commands to specific (overwrite) guild/server
-      else
-        res = await client.commandManager.deployCommands({
-          type: 'development',
-          guildId,
-        });
+    const guildId = interaction.guildId;
+    if (!guildId) {
+      await interaction.reply('This command can only be used in a server.');
+      return;
     }
 
-    // User feedback
-    DeployCommand.reply(interaction, {
-      content: `Deployed a total of ${res.commands.length} commands ${
-        scope === 'global' ? 'globally' : `to guild ${guildId}`
-      }`,
-    });
+    await interaction.deferReply();
+
+    try {
+      await client.commandManager.deployCommands(guildId);
+      await interaction.editReply('Successfully deployed commands to this server.');
+    } catch (error) {
+      console.error('Error deploying commands:', error);
+      await interaction.editReply('An error occurred while deploying commands. Please check the console for more details.');
+    }
   },
 });
 

@@ -8,7 +8,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("DIRECT_URL")
 }
 
 model User {
@@ -102,4 +102,13 @@ model CommandStatistics {
   runtimeMedian       Float?
   runtimeVariance     Float?
   runtimeStdDeviation Float?
+}
+
+model Conversation {
+  id        String   @id @default(uuid())
+  userId    String
+  model     String
+  messages  Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
